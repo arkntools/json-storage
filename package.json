@@ -1,0 +1,30 @@
+{
+  "name": "arknights-toolbox-json-storage",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "setup-local-db": "wrangler d1 execute arknights-toolbox-json-storage --local --file=./setup.sql"
+  },
+  "dependencies": {
+    "d1-orm": "^0.9.0",
+    "hono": "^3.12.8",
+    "nanoid": "^5.0.4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240129.0",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-standard-with-typescript": "^43.0.1",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3",
+    "wrangler": "^3.25.0"
+  }
+}
