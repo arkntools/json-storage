@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "d1-orm": "^0.9.0",
-    "hono": "^3.12.8",
+    "hono": "^3.12.9",
     "nanoid": "^5.0.4"
   },
   "devDependencies": {

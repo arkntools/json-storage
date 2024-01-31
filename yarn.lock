@@ -1283,10 +1283,10 @@ hasown@^2.0.0:
   dependencies:
     function-bind "^1.1.2"
 
-hono@^3.12.8:
-  version "3.12.8"
-  resolved "https://registry.yarnpkg.com/hono/-/hono-3.12.8.tgz#7c137aa6ac7bcd2aec3f55b9596d71e97081963a"
-  integrity sha512-vnOEIRdqsp4uHE/dkOBr9EYmTsR86sD/FyG2xhfAQzR9udDRglN1nuO7SGc/7U3HfSorc6PSCNGN6upnVtCmfg==
+hono@^3.12.9:
+  version "3.12.9"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-3.12.9.tgz#140ce14c9ba1a101914faa9e89479515af4a97aa"
+  integrity sha512-JhurtI3+VspowZoP3dv6BylhUPIpTWNRlBsVfb5UbI/tmMGqd6RpeexGO7RjnrSG9Vqwb1ydKp7HHTTcYJU5Zw==
 
 ignore@^5.2.0, ignore@^5.2.4:
   version "5.3.0"
