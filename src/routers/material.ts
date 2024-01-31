@@ -1,30 +1,29 @@
 import { Hono } from 'hono';
-import { Db } from '../utils/db';
+import { StatusError } from '../utils/error';
+import { createDbMiddleware } from '../middlewares/db';
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.onError((e, c) => c.text('', 403));
+const dbMiddleware = createDbMiddleware('material');
 
-app.put('/', async c => {
+app.onError((e, c) => c.text('', e instanceof StatusError ? e.status : 500));
+
+app.put('/', dbMiddleware, async c => {
   const data = await c.req.json();
-  const db = new Db(c.env.DB);
-  const id = await db.create(data);
+  const id = await c.var.db.create(data);
   return c.json({ id });
 });
 
-app.get('/:id', async c => {
+app.get('/:id', dbMiddleware, async c => {
   const id = c.req.param('id');
-  const db = new Db(c.env.DB);
-  const data = await db.get(id);
-  if (!data) throw new Error();
+  const data = await c.var.db.get(id);
   return c.json(data);
 });
 
-app.put('/:id', async c => {
+app.put('/:id', dbMiddleware, async c => {
   const id = c.req.param('id');
   const data = await c.req.json();
-  const db = new Db(c.env.DB);
-  await db.update(id, data);
+  await c.var.db.update(id, data);
   return c.text('');
 });
 

@@ -1,18 +1,22 @@
 import { D1Orm, DataTypes, Model } from 'd1-orm';
 import { nanoid } from './nanoid';
+import { StatusError } from './error';
 
 export class Db {
-  public readonly orm: D1Orm;
-  public readonly material: ReturnType<typeof this.createModel>;
+  private readonly orm: D1Orm;
+  private readonly model: ReturnType<typeof this.createModel>;
 
-  public constructor(db: D1Database) {
+  public constructor(
+    db: D1Database,
+    private readonly tableName: string,
+  ) {
     this.orm = new D1Orm(db);
-    this.material = this.createModel('material');
+    this.model = this.createModel(tableName);
   }
 
   public async create(obj: any) {
     const id = nanoid();
-    await this.material.InsertOne({
+    await this.model.InsertOne({
       id,
       content: JSON.stringify(obj),
       lastUpdate: Date.now(),
@@ -21,12 +25,13 @@ export class Db {
   }
 
   public async get(id: string) {
-    const row = await this.material.First({ where: { id } });
-    return row?.content ? JSON.parse(row.content) : undefined;
+    const row = await this.model.First({ where: { id } });
+    if (row?.content) return JSON.parse(row.content);
+    throw new StatusError(404);
   }
 
   public async update(id: string, obj: any) {
-    const result = await this.material.Update({
+    const result = await this.model.Update({
       where: { id },
       data: {
         id,
@@ -34,7 +39,7 @@ export class Db {
         lastUpdate: Date.now(),
       },
     });
-    if (result.meta.changes === 0) throw new Error('id not exists');
+    if (result.meta.changes === 0) throw new StatusError(404);
   }
 
   private createModel(tableName: string) {
