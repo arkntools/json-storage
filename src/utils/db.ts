@@ -1,6 +1,19 @@
 import { D1Orm, DataTypes, Model } from 'd1-orm';
 import { nanoid } from './nanoid';
 import { StatusError } from './error';
+import type { MiddlewareHandler } from 'hono';
+
+export enum DbTableName {
+  MATERIAL = 'material',
+}
+
+export const createDbMiddleware: (tableName: DbTableName) => MiddlewareHandler<{
+  Bindings: Env;
+  Variables: { db: Db };
+}> = (tableName: DbTableName) => async (c, next) => {
+  c.set('db', new Db(c.env.DB, tableName));
+  await next();
+};
 
 export class Db {
   private readonly orm: D1Orm;
@@ -8,7 +21,7 @@ export class Db {
 
   public constructor(
     db: D1Database,
-    private readonly tableName: string,
+    private readonly tableName: DbTableName,
   ) {
     this.orm = new D1Orm(db);
     this.model = this.createModel(tableName);
@@ -40,6 +53,15 @@ export class Db {
       },
     });
     if (result.meta.changes === 0) throw new StatusError(404);
+  }
+
+  public async purge() {
+    const query = `DELETE FROM \`${this.tableName}\` WHERE lastUpdate < ?`;
+    const result = await this.orm
+      .prepare(query)
+      .bind(Date.now() - 90 * 86400 * 1000)
+      .run();
+    console.log('purge', this.tableName, result.meta.changes);
   }
 
   private createModel(tableName: string) {

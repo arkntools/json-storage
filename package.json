@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "wrangler dev --test-scheduled",
     "deploy": "wrangler deploy",
     "setup-local-db": "wrangler d1 execute arknights-toolbox-json-storage --local --file=./setup.sql"
   },

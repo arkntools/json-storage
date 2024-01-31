@@ -1,10 +1,10 @@
 import { Hono } from 'hono';
 import { StatusError } from '../utils/error';
-import { createDbMiddleware } from '../middlewares/db';
+import { DbTableName, createDbMiddleware } from '../utils/db';
 
 const app = new Hono<{ Bindings: Env }>();
 
-const dbMiddleware = createDbMiddleware('material');
+const dbMiddleware = createDbMiddleware(DbTableName.MATERIAL);
 
 app.onError((e, c) => c.text('', e instanceof StatusError ? e.status : 500));
 
