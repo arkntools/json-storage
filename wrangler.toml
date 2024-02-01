@@ -2,7 +2,10 @@ name = "arknights-toolbox-json-storage"
 main = "src/index.ts"
 compatibility_date = "2024-01-29"
 
-routes = [{ pattern = "json.arkntools.app", custom_domain = true }]
+workers_dev = false
+routes = [
+  { pattern = "arknights-toolbox-json-storage.lolicon.app", custom_domain = true },
+]
 
 [triggers]
 crons = ["0 0 1 * *"]
