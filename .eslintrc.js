@@ -12,6 +12,7 @@ const offTsRules = [
   'ban-types',
   'return-await',
   'consistent-type-definitions',
+  'no-unsafe-argument',
 ];
 
 module.exports = {
@@ -25,7 +26,7 @@ module.exports = {
     project: './tsconfig.json',
   },
   rules: {
-    ...Object.fromEntries(offTsRules.map((name) => [`@typescript-eslint/${name}`, 'off'])),
+    ...Object.fromEntries(offTsRules.map(name => [`@typescript-eslint/${name}`, 'off'])),
     'import/order': ['warn', { groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type'] }],
     'import/no-named-as-default': 'off',
     '@typescript-eslint/consistent-type-imports': [
