@@ -1,7 +1,6 @@
 import { D1Orm, DataTypes, Model } from 'd1-orm';
 import { nanoid } from './nanoid';
 import { StatusError } from './error';
-import { validateMaterialData } from './validate';
 import type { MiddlewareHandler } from 'hono';
 
 export enum DbTableName {
@@ -29,7 +28,6 @@ export class Db {
   }
 
   public async create(obj: any) {
-    if (!validateMaterialData(obj)) throw new StatusError(400);
     const id = nanoid();
     await this.model.InsertOne({
       id,
@@ -46,7 +44,6 @@ export class Db {
   }
 
   public async update(id: string, obj: any) {
-    if (!validateMaterialData(obj)) throw new StatusError(400);
     const result = await this.model.Update({
       where: { id },
       data: {

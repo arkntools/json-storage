@@ -1,48 +1,36 @@
-const isNumber = (val: any) => !Number.isNaN(Number(val));
-const isObject = (val: any) => typeof val === 'object' && !Array.isArray(val);
-const isNulOrArray = (val: any) => !val || Array.isArray(val);
-const isNulOrObject = (val: any) => !val || isObject(val);
+import { z } from 'zod';
+import { zValidator } from '@hono/zod-validator';
 
-const rootProps = new Set(['inputs', 'presets', 'planStageBlacklist']);
-const presetItemProps = new Set(['name', 'setting']);
-const presetItemSettingProps = new Set(['evolve', 'skills', 'uniequip']);
-const modReg = /^mod_(unlock|update)_token(_\d)?$/;
-const stageReg = /^[0-9A-Z-]{1,10}$/;
+const skillNormalLevel = z.number().min(1).max(7).int();
+const skillEliteLevel = z.number().min(7).max(10).int();
+const uniequipLevel = z.number().min(0).max(3).int();
 
-export const validateMaterialData = (obj: any) => {
-  if (typeof obj !== 'object') return false;
-  if (Object.keys(obj).some(k => !rootProps.has(k))) return false;
-  if (obj.inputs) {
-    if (!isObject(obj.inputs)) return false;
-    if (
-      !Object.entries(obj.inputs).every(
-        ([k, v]) => ((isNumber(k) && k.length <= 5) || modReg.test(k)) && Array.isArray(v) && v.length === 2 && v.every(isNumber),
-      )
-    ) {
-      return false;
-    }
-  }
-  if (obj.presets) {
-    if (!Array.isArray(obj.presets)) return false;
-    if (
-      !(obj.presets as any[]).every(
-        item =>
-          isObject(item) &&
-          Object.keys(item).every(k => presetItemProps.has(k)) &&
-          typeof item.name === 'string' &&
-          isObject(item.setting) &&
-          Object.keys(item.setting).every(k => presetItemSettingProps.has(k)) &&
-          isNulOrArray(item.setting.evolve) &&
-          isNulOrObject(item.setting.skills) &&
-          isNulOrObject(item.setting.uniequip),
-      )
-    ) {
-      return false;
-    }
-  }
-  if (obj.planStageBlacklist) {
-    if (!Array.isArray(obj.planStageBlacklist)) return false;
-    if (!(obj.planStageBlacklist as any[]).every(i => typeof i === 'string' && i.includes('-') && stageReg.test(i))) return false;
-  }
-  return true;
-};
+const materialObj = z
+  .object({
+    inputs: z.record(z.string().regex(/^\d{4,5}$|^mod_(unlock|update)_token(_\d)?$/), z.number().nonnegative().int().array().length(2)),
+    presets: z
+      .object({
+        name: z.string().regex(/^\d+_[0-9a-z]+$/),
+        setting: z
+          .object({
+            evolve: z.boolean().array().max(2),
+            skills: z
+              .object({
+                normal: z.tuple([z.boolean(), skillNormalLevel, skillNormalLevel]),
+                elite: z.tuple([z.boolean(), skillEliteLevel, skillEliteLevel]).array(),
+              })
+              .strict(),
+            uniequip: z.record(z.string().regex(/^uniequip_\d{3}_[0-9a-z]+$/), z.tuple([z.boolean(), uniequipLevel, uniequipLevel])),
+          })
+          .strict(),
+      })
+      .strict()
+      .array(),
+    planStageBlacklist: z
+      .string()
+      .regex(/[0-9A-Z]+(-[0-9A-Z]+){1,2}/)
+      .array(),
+  })
+  .strict();
+
+export const materialValidatorMiddleware = zValidator('json', materialObj, (result, c) => (result.success ? undefined : c.body(null, 400)));
