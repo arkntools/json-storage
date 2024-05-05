@@ -5,6 +5,8 @@ import { Db, DbTableName } from './utils/db';
 
 const app = new Hono<{ Bindings: Env }>();
 
+app.get('/', c => c.body('OK', 200));
+
 app.use('*', async (c, next) => {
   const allowOrigins = c.env.ALLOW_ORIGIN?.split(',') || [];
   if (!c.env.IS_DEV && !allowOrigins.includes(c.req.header('origin') || '*')) {
