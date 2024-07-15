@@ -11,7 +11,7 @@ routes = [
 crons = ["0 0 1 * *"]
 
 [vars]
-ALLOW_ORIGIN = "https://arkntools.app,https://arkn.lolicon.app,https://arknbak.lolicon.app"
+ALLOW_ORIGIN = "https://arkntools.app,https://arknbak.lolicon.app"
 
 [[d1_databases]]
 binding = "DB"
