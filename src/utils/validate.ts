@@ -34,4 +34,4 @@ const materialObj = z
   })
   .strict();
 
-export const materialValidatorMiddleware = zValidator('json', materialObj, (result, c) => (result.success ? undefined : c.body(null, 400)));
+export const materialValidatorMiddleware = zValidator('json', materialObj, (result, c) => (result.success ? undefined : c.body('Data validation failed', 400)));
