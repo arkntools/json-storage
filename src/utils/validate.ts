@@ -21,6 +21,7 @@ const materialObj = z
               })
               .strict(),
             uniequip: z.record(z.string().regex(/^uniequip_\d{3}_[0-9a-z]+$/), z.tuple([z.boolean(), uniequipLevel, uniequipLevel])),
+            focus: z.boolean().optional(),
           })
           .strict(),
       })
