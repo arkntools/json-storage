@@ -1,13 +1,14 @@
 import { Hono } from 'hono';
+import type { StatusCode } from 'hono/utils/http-status';
+import { createDbMiddleware, DbTableName } from '../utils/db';
 import { StatusError } from '../utils/error';
-import { DbTableName, createDbMiddleware } from '../utils/db';
 import { materialValidatorMiddleware } from '../utils/validate';
 
 const app = new Hono<{ Bindings: Env }>();
 
 const dbMiddleware = createDbMiddleware(DbTableName.MATERIAL);
 
-app.onError((e, c) => c.body(null, e instanceof StatusError ? e.status : 500));
+app.onError((e, c) => c.body(null, e instanceof StatusError ? (e.status as StatusCode) : 500));
 
 app.post('/', dbMiddleware, materialValidatorMiddleware, async c => {
   const data = c.req.valid('json');

@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { zValidator } from '@hono/zod-validator';
+import { z } from 'zod';
 
 const skillNormalLevel = z.number().min(1).max(7).int();
 const skillEliteLevel = z.number().min(7).max(10).int();
